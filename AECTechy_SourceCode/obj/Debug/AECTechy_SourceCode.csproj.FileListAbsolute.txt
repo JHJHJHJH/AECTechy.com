@@ -9,3 +9,9 @@ C:\Users\808037\OneDrive - Surbana Jurong Private Limited\Website\AECTechy_Sourc
 C:\Users\808037\OneDrive - Surbana Jurong Private Limited\Website\AECTechy_SourceCode\AECTechy_SourceCode\obj\Debug\AECTechy_SourceCode.csprojResolveAssemblyReference.cache
 C:\Users\808037\OneDrive - Surbana Jurong Private Limited\Website\AECTechy_SourceCode\AECTechy_SourceCode\obj\Debug\AECTechy_SourceCode.dll
 C:\Users\808037\OneDrive - Surbana Jurong Private Limited\Website\AECTechy_SourceCode\AECTechy_SourceCode\obj\Debug\AECTechy_SourceCode.pdb
+C:\Users\junha\Source\Repos\JHJHJHJH\AECTechy.com\AECTechy_SourceCode\bin\Debug\AECTechy_SourceCode.dll
+C:\Users\junha\Source\Repos\JHJHJHJH\AECTechy.com\AECTechy_SourceCode\bin\Debug\AECTechy_SourceCode.pdb
+C:\Users\junha\Source\Repos\JHJHJHJH\AECTechy.com\AECTechy_SourceCode\obj\Debug\AECTechy_SourceCode.csprojAssemblyReference.cache
+C:\Users\junha\Source\Repos\JHJHJHJH\AECTechy.com\AECTechy_SourceCode\obj\Debug\AECTechy_SourceCode.csproj.CoreCompileInputs.cache
+C:\Users\junha\Source\Repos\JHJHJHJH\AECTechy.com\AECTechy_SourceCode\obj\Debug\AECTechy_SourceCode.dll
+C:\Users\junha\Source\Repos\JHJHJHJH\AECTechy.com\AECTechy_SourceCode\obj\Debug\AECTechy_SourceCode.pdb

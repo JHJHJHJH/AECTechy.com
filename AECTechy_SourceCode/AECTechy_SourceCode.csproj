@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddSharedParam.cs" />
+    <Compile Include="BooleanGeometry.cs" />
     <Compile Include="PipeAndConnectors.cs" />
     <Compile Include="DirShape.cs" />
     <Compile Include="GroupBy.cs" />
