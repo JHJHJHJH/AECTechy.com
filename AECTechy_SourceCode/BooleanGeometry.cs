@@ -2,6 +2,7 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System.Collections.Generic;
+using System;
 
 namespace AECTechy
 {
@@ -12,29 +13,36 @@ namespace AECTechy
         {
             Document doc = commandData.Application.ActiveUIDocument.Document;
 
-            Solid box1 = CreateBox1();
-            Solid box2 = CreateBox2();
+            Solid box = Box();
+            Solid sphere = Sphere();
 
-            Solid newSolid = BooleanOperationsUtils.ExecuteBooleanOperation(box1, box2, BooleanOperationsType.Union);
+            Solid unionSolid = BooleanOperationsUtils.ExecuteBooleanOperation(box, sphere, BooleanOperationsType.Union);
+            Solid intersectSolid = BooleanOperationsUtils.ExecuteBooleanOperation(box, sphere, BooleanOperationsType.Intersect);
+            Solid diffSolid = BooleanOperationsUtils.ExecuteBooleanOperation(box, sphere, BooleanOperationsType.Difference);
 
-            GeometryObject[] geomObj = new GeometryObject[] { newSolid };
-
+            //Use DirectShape to visualise geometries
             using (Transaction t = new Transaction(doc, "Transaction"))
             {
                 t.Start();
-                DirectShape ds = DirectShape.CreateElement( doc , new ElementId( BuiltInCategory.OST_GenericModel ) );
-                ds.SetShape(geomObj);
-
+                GeometryObject[] unionGeomObj = new GeometryObject[] { unionSolid };
+                GeometryObject[] interGeomObj = new GeometryObject[] { intersectSolid };
+                GeometryObject[] diffGeomObj = new GeometryObject[] { diffSolid };
+                DirectShape ds1 = DirectShape.CreateElement( doc , new ElementId( BuiltInCategory.OST_GenericModel ) );
+                ds1.SetShape(unionGeomObj);
+                DirectShape ds2 = DirectShape.CreateElement( doc , new ElementId( BuiltInCategory.OST_GenericModel ) );
+                ds2.SetShape(interGeomObj);
+                DirectShape ds3 = DirectShape.CreateElement( doc , new ElementId( BuiltInCategory.OST_GenericModel ) );
+                ds3.SetShape(diffGeomObj);
                 t.Commit();
             }
 
             return Result.Succeeded;
         }
 
-        public static Solid CreateBox1( )
+        public static Solid Box( )
         {
-            XYZ btmLeft = new XYZ(-3 , -3 , 0 );
-            XYZ topRight = new XYZ( 3 , 3 , 0 );
+            XYZ btmLeft = new XYZ(-0.5 , -0.5 , 0 );
+            XYZ topRight = new XYZ( 0.5 , 0.5 , 0 );
             XYZ btmRight = new XYZ(topRight.X, btmLeft.Y, 0);
             XYZ topLeft = new XYZ(btmLeft.X, topRight.Y, 0);
 
@@ -53,37 +61,37 @@ namespace AECTechy
             IList<CurveLoop> cl = new List<CurveLoop>();
             cl.Add(crvLoop);
 
-            Solid box = GeometryCreationUtilities.CreateExtrusionGeometry(cl, XYZ.BasisZ, 4.5 );
+            Solid box = GeometryCreationUtilities.CreateExtrusionGeometry(cl, XYZ.BasisZ, 1 );
 
             return box;
-
         }
-        public static Solid CreateBox2()
+
+        public static Solid Sphere()
         {
-            XYZ btmLeft = new XYZ(2, -1, 0);
-            XYZ topRight = new XYZ(7.5, 6.5, 0);
-            XYZ btmRight = new XYZ(topRight.X, btmLeft.Y, 0);
-            XYZ topLeft = new XYZ(btmLeft.X, topRight.Y, 0);
+            XYZ center = new XYZ(0, 0, 0.5);
+            double radius = 0.75;
+            // Use the standard global coordinate system 
+            // as a frame, translated to the sphere bottom.
+            Frame frame = new Frame(center, XYZ.BasisX, XYZ.BasisY, XYZ.BasisZ);
 
-            Curve btm = Line.CreateBound(btmLeft, btmRight) as Curve;
-            Curve right = Line.CreateBound(btmRight, topRight) as Curve;
-            Curve top = Line.CreateBound(topRight, topLeft) as Curve;
-            Curve left = Line.CreateBound(topLeft, btmLeft) as Curve;
+            // Create a vertical half-circle loop;
+            // this must be in the frame location.
+            XYZ start = center - radius * XYZ.BasisZ;
+            XYZ end = center + radius * XYZ.BasisZ;
+            XYZ XyzOnArc = center + radius * XYZ.BasisX;
 
-            CurveLoop crvLoop = new CurveLoop();
+            Arc arc = Arc.Create(start, end, XyzOnArc);
 
-            crvLoop.Append(btm);
-            crvLoop.Append(right);
-            crvLoop.Append(top);
-            crvLoop.Append(left);
+            Line line = Line.CreateBound(arc.GetEndPoint(1), arc.GetEndPoint(0));
 
-            IList<CurveLoop> cl = new List<CurveLoop>();
-            cl.Add(crvLoop);
+            CurveLoop halfCircle = new CurveLoop();
+            halfCircle.Append(arc);
+            halfCircle.Append(line);
 
-            Solid box = GeometryCreationUtilities.CreateExtrusionGeometry(cl, XYZ.BasisZ, 7);
+            List<CurveLoop> loops = new List<CurveLoop>(1);
+            loops.Add(halfCircle);
 
-            return box;
-
+            return GeometryCreationUtilities.CreateRevolvedGeometry(frame, loops, 0, 2 * Math.PI);
         }
     }
 }
